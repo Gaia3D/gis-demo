@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* RESET CSS */
+* { margin:0; padding:0; outline:0; vertical-align:top; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu nav, section { display:block; }
+ul, ol, dl { list-style:none; }
+img, video { max-width:100%; border:0; vertical-align:top; }
+a {vertical-align:top; text-decoration:none; color:#000; }
+table { border-collapse:collapse; border-spacing:0; }
+input, select { vertical-align:middle; }
+html, body { margin:0; padding:0; height:100%; }
+body, th, td, input, select, textarea { color:#444; font-family:'Malgun Gothic','돋움',dotum, sans-serif; font-size:13px; line-height:1.5em;}
+button { cursor:pointer; font-family:'Malgun Gothic','돋움'; }
+
+.map {
+position: absolute;
+width: 100%;
+height: 100%;
+overflow: hidden;
+/*background: url(../images/@map.png) repeat 0 0;*/
+}
+.mapControl {
+position: absolute;
+top: 10px;
+left: 10px;
+}
+.mapControl > button {
+display: block;
+margin: 10px;
+width: 100px;
+height: 40px;
+}
