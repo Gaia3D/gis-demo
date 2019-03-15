@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hhi.persistence.BlockMapper">
+	<select id="getBlockFromGeometry" parameterType="block" resultType="block">
+		/* getBlockFromGeometry */
+		SELECT block_id, jibun_id, st_asText(geom) geom
+		FROM block_geometry
+	</select>
+
+	<select id="getBlockFromText" parameterType="block" resultType="block">
+		/* getBlockFromText */
+		SELECT block_id, jibun_id, geom
+		FROM block_text
+	</select>
+</mapper>

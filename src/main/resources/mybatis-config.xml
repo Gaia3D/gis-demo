@@ -6,6 +6,7 @@
 <configuration>
 	<settings>
 		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
 	</settings>
 
 	<typeAliases>

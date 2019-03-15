@@ -1,4 +1,4 @@
-var MapUtils = function(map) {
+function MapUtils(map) {
 
 	if (!(this instanceof MapUtils)) {
 		throw new Error("New 를 통해 생성 하십시오.");
@@ -11,12 +11,12 @@ var MapUtils = function(map) {
 MapUtils.prototype = {
 	contructor: MapUtils,
 
-	// 현재 좌표계 조회 (HHI.Utils.getCurProj())
+	// 현재 좌표계 조회 (GAIA3D.Utils.getCurProj())
 	getCurProj: function() {
 		return this.view.getProjection();
 	},
 
-	// ID를 통해 레이어 찾기 (HHI.Utils.getLayerById('base_layer'))
+	// ID를 통해 레이어 찾기 (GAIA3D.Utils.getLayerById('base_layer'))
 	getLayerById: function(layerId) {
 		var layer = null;
 		if(layerId){

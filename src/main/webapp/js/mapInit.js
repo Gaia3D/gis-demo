@@ -55,6 +55,26 @@ var MapWrapper = function(mapConfig) {
 			source: new ol.source.Vector({
 				features: new ol.Collection()
 			})
+		}),
+		// draw 레이어
+		new ol.layer.Vector({
+			id: 'draw_layer',
+			source: new ol.source.Vector(),
+			style: new ol.style.Style({
+				fill: new ol.style.Fill({
+					color: 'rgba(255, 255, 255, 0.2)'
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#ffcc33',
+					width: 2
+				}),
+				image: new ol.style.Circle({
+					radius: 7,
+					fill: new ol.style.Fill({
+						color: '#ffcc33'
+					})
+				})
+			})
 		})
 	];
 
@@ -77,6 +97,42 @@ var MapWrapper = function(mapConfig) {
 		projection : proj
 	});
 
+
+	/** controls을 활용하여 지도 확대/축소 기능 구현 **/
+	var zoom = new ol.control.Zoom({
+        units: 'metric',
+        duration: 700,
+        zoomInLabel: '지도 확대',
+        zoomOutLabel: '지도 축소',
+        target: document.getElementById('zoom')
+    });
+
+	var mousePositionControl = new ol.control.MousePosition({
+        //coordinateFormat: ol.coordinate.createStringXY(6),	// 소수점 여섯째
+		coordinateFormat: function(coordinate) {
+            return ol.coordinate.format(coordinate, '{x}, {y}　EPSG:4326', 6);
+        },
+		projection: ol.proj.get('EPSG:4326'),
+		className: 'mousePosition',
+		target: document.getElementById('mouse-position'),
+		undefinedHTML: ' '
+	});
+
+	var mouseWheelZoom = new ol.interaction.MouseWheelZoom({
+		duration: 700
+	});
+
+    var overlay = new ol.Overlay({
+        id: 'tooltip-overlay',
+        element: document.getElementById('tooltip'),
+        autoPan: true,
+    	autoPanAnimation: {
+    		duration: 250
+    	},
+        offset: [10, 0],
+        positioning: 'bottom-left'
+    });
+
 	// 지도객체
 	var map;
 
@@ -87,17 +143,34 @@ var MapWrapper = function(mapConfig) {
 		});
     };
 
+    this.getMap = function() {
+    	return map;
+    };
+
     this.create = function(element) {
 		// 좌표계 정의
         projDefs();
 
 		// 맵 생성
 		map = new ol.Map({
-			interactions: ol.interaction.defaults({}).extend([]),
+	        controls: ol.control.defaults({
+	        	attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+	                collapsible: false
+	            }), zoom:false, rotate:false
+	        }).extend([
+	        	mousePositionControl
+	        ]),
+			interactions: ol.interaction.defaults(),
+	        overlays: [overlay],
 			layers: layers,
 			view: view,
 			target: element
 		});
+
+		//map.addControls(zoom);
+		//map.addControls(mousePositionControl);
+		map.addInteraction(mouseWheelZoom);
+
 		return map;
 	};
 };
