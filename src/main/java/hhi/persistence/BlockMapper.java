@@ -13,9 +13,6 @@ import hhi.domain.Block;
 @Repository
 public interface BlockMapper {
 
-	/** 블록 목록 조회 - geometry **/
-	List<Block> getBlockFromGeometry(Block block);
-
-	/** 블록 목록 조회 - text **/
-	List<Block> getBlockFromText(Block block);
+	/** 블록 목록 조회 **/
+	List<Block> getBlockList(Block block);
 }

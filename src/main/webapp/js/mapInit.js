@@ -20,7 +20,7 @@ var MapWrapper = function(mapConfig) {
 
 	var layers = [
 		// 항공 영상
-		new ol.layer.Tile({
+		/*new ol.layer.Tile({
 			id: 'aerial_layer',
 			visible: true,
 			source: new ol.source.TileWMS({
@@ -33,7 +33,11 @@ var MapWrapper = function(mapConfig) {
 					'LAYERS': [ mapDefaultLayer ]
 				}
 			})
-		}),
+		}),*/
+		new ol.layer.Tile({
+			id: 'osm_layer',
+			source: new ol.source.OSM()
+	    }),
 		// shp 파일
 		new ol.layer.Image({
 			id: 'base_layer',
@@ -51,7 +55,7 @@ var MapWrapper = function(mapConfig) {
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',
-			visible: false,
+			visible: true,
 			source: new ol.source.Vector({
 				features: new ol.Collection()
 			})
@@ -142,6 +146,10 @@ var MapWrapper = function(mapConfig) {
 			proj4.defs(key, projCode[key]);
 		});
     };
+    
+    this.getMap = function() {
+    	return map;
+    }
 
     this.getMap = function() {
     	return map;

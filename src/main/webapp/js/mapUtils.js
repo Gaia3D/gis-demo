@@ -29,5 +29,47 @@ MapUtils.prototype = {
 			}
 		}
 		return layer;
+	},
+	
+	getFeatureFromWkt: function(wkt) {
+		var format = new ol.format.WKT();
+		var feature = format.readFeature(wkt, {
+			dataProjection: 'EPSG:4326',
+			featureProjection: this.getCurProj()
+		});
+		return feature;
+	},
+	
+	getFeatureFromBox: function(box) {
+		return null;
+	},
+	
+	addFeatureToLayer: function(layerId, feature) {
+		var layer = this.getLayerById(layerId);
+		layer.getSource().addFeature(feature);
+	},
+	
+	addFeaturesToLayer: function(layerId, features) {
+		var layer = this.getLayerById(layerId);
+		layer.getSource().addFeatures(features);
+	},
+	
+	removeFeaturesToLayer: function(layerId) {
+		var layer = this.getLayerById(layerId);
+		layer.getSource().clear();
+	},
+	
+	getBlockStyle: function() {
+		var style = new ol.style.Style({
+			fill: new ol.style.Fill({
+				color: 'rgba(255, 0, 0, 1)'
+			}),
+			stroke: new ol.style.Stroke({
+				color: 'rgba(0, 0, 0, 0.5)',
+				//lineDash: [10, 10],
+				width: 2
+			})
+        });
+		return style;
 	}
 }

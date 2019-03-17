@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html>
 <html lang="ko-KR">
 <head>
@@ -15,10 +16,9 @@
 		<button class="rotate" data-direction="right">지도회전(&lt;)</button>
 		<button class="rotate" data-direction="left">지도회전(&gt;)</button>
 		<p>블록</p>
-		<button class="search" data-type="geometry">블록조회(Geometry)</button>
-		<button class="search" data-type="text">블록조회(Text)</button>
-		<button class="">블록지우기</button>
-		<button class="">블록이동</button>
+		<button id="addBlock" data-target-layer="block_layer">블록조회</button>
+		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>
+		<button class="translate">블록이동</button>
 	</div>
 
 	<!-- 스케일 바 -->
@@ -41,7 +41,7 @@
 var GAIA3D = GAIA3D||{};
 
 GAIA3D.Policy = {}
-GAIA3D.Policy.serverUrl = 'http://localhost:8081';
+GAIA3D.Policy.serverUrl = 'http://localhost:8082';
 GAIA3D.Policy.geoserverDataUrl = 'http://localhost:8080/geoserver';
 GAIA3D.Policy.geoserverDataWorkspace = 'gaia3d';
 GAIA3D.Policy.coordinate = 'EPSG:5187';

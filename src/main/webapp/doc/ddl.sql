@@ -7,7 +7,7 @@ CREATE TABLE public.block_geometry
 (
   block_id character varying(10) NOT NULL, -- 블록ID
   jibun_id character varying(10), -- 지번ID
-  geom geometry(Polygon,5187), -- 블록 공간정보
+  geom geometry(Polygon, 4326), -- 블록 공간정보
   location character varying(100), -- 블록 위치
   CONSTRAINT block_polygon_pkey PRIMARY KEY (block_id)
 )
