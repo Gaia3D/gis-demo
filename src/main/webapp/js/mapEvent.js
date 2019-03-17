@@ -14,6 +14,7 @@
 	// 블록 조회
 	$('#addBlock').on('click', function() {
 		var layerId = $(this).data('target-layer');
+		GAIA3D.Utils.clearFeatureToLayer(layerId);
 		
 		$.ajax({
 			url: GAIA3D.Policy.serverUrl + '/block',
@@ -21,7 +22,6 @@
 			dataType: 'json',
 			type: 'post',
 			success: function(res) {
-				GAIA3D.Utils.removeFeaturesToLayer(layerId);
 				addBlock(layerId, res);
 			},
 			error: function(e) {
@@ -32,11 +32,25 @@
 	
 	// 블록 지우기
 	$('#removeBlock').on('click', function() {
+		// select feature
+		var select = GAIA3D.Map.getSelect();
+		GAIA3D.Utils.clearFeatureToSelect(select);
+		
+		// block layer clears
 		var layerId = $(this).data('target-layer');
-		GAIA3D.Utils.removeFeaturesToLayer(layerId);
+		GAIA3D.Utils.clearFeatureToLayer(layerId);
 	});
 	
 	// 블록 이동
+	$(".translate").on('click', function() {
+		var status = $(this).data('status');
+		var toggleStatus = status === 'on'? 'off' : 'on';
+		
+		$(this).data('status', toggleStatus);
+		var text = $(this).data(toggleStatus);
+		$(this).text(text);
+		GAIA3D.Map.setTranslate(toggleStatus);
+	});
 })();
 
 function addBlock(layerId, res) {

@@ -76,7 +76,11 @@ MapUtils.prototype = {
 		layer.getSource().addFeatures(features);
 	},
 	
-	removeFeaturesToLayer: function(layerId) {
+	clearFeatureToSelect: function(select) {
+		select.getFeatures().clear();
+	},
+	
+	clearFeatureToLayer: function(layerId) {
 		var layer = this.getLayerById(layerId);
 		layer.getSource().clear();
 	},

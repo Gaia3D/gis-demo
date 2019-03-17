@@ -55,6 +55,7 @@ var MapWrapper = function(mapConfig) {
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',
+			option: 'translate',
 			visible: true,
 			source: new ol.source.Vector({
 				features: new ol.Collection()
@@ -101,16 +102,8 @@ var MapWrapper = function(mapConfig) {
 		projection : proj
 	});
 
-
-	/** controls을 활용하여 지도 확대/축소 기능 구현 **/
-	var zoom = new ol.control.Zoom({
-        units: 'metric',
-        duration: 700,
-        zoomInLabel: '지도 확대',
-        zoomOutLabel: '지도 축소',
-        target: document.getElementById('zoom')
-    });
-
+	
+	/*** START: control ***/
 	var mousePositionControl = new ol.control.MousePosition({
         //coordinateFormat: ol.coordinate.createStringXY(6),	// 소수점 여섯째
 		coordinateFormat: function(coordinate) {
@@ -121,11 +114,43 @@ var MapWrapper = function(mapConfig) {
 		target: document.getElementById('mouse-position'),
 		undefinedHTML: ' '
 	});
+	/*** END: control ***/
+
+	
+	/*** START: interaction ***/
+	var selectFilter = false;
+    var select = new ol.interaction.Select({
+		condition: ol.events.condition.click,
+		features: ol.interaction.Select,
+		toggleCondition: ol.events.condition.shiftKeyOnly,
+		layers: function() {
+			// translate를 할 레이어 설정
+			var targetLayer = [];
+			var option = 'translate';
+			var layers = map.getLayers().getArray();
+			layers.filter(function(layer, index) {
+				if(layer.get('option') === option){
+					targetLayer.push(layer);
+				}
+			});
+			return targetLayer;
+		},
+		filter: function(e, a, b) {
+			return selectFilter;
+		}
+	});
+    
+    // 블록 이동
+	var translate = new ol.interaction.Translate({
+		features: select.getFeatures()
+	});
 
 	var mouseWheelZoom = new ol.interaction.MouseWheelZoom({
 		duration: 700
 	});
+	/*** END: interaction ***/
 
+	
     var overlay = new ol.Overlay({
         id: 'tooltip-overlay',
         element: document.getElementById('tooltip'),
@@ -149,12 +174,17 @@ var MapWrapper = function(mapConfig) {
     
     this.getMap = function() {
     	return map;
-    }
-
-    this.getMap = function() {
-    	return map;
+    };
+    
+    this.getSelect = function() {
+    	return select;
     };
 
+    this.setTranslate = function(status) {
+    	var boolean = status === 'on' ? true : false;
+    	selectFilter = boolean;
+    };
+    
     this.create = function(element) {
 		// 좌표계 정의
         projDefs();
@@ -175,8 +205,9 @@ var MapWrapper = function(mapConfig) {
 			target: element
 		});
 
-		//map.addControls(zoom);
 		//map.addControls(mousePositionControl);
+		map.addInteraction(select);
+		map.addInteraction(translate);
 		map.addInteraction(mouseWheelZoom);
 
 		return map;

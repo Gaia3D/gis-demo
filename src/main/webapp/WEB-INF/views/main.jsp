@@ -18,7 +18,7 @@
 		<p>블록</p>
 		<button id="addBlock" data-target-layer="block_layer">블록조회</button>
 		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>
-		<button class="translate">블록이동</button>
+		<button class="translate" data-status="off" data-on="블록이동 ON" data-off="블록이동 OFF">블록이동 OFF</button>
 	</div>
 
 	<!-- 스케일 바 -->
