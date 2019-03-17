@@ -41,7 +41,29 @@ MapUtils.prototype = {
 	},
 	
 	getFeatureFromBox: function(box) {
-		return null;
+		var coord = this.getCoordByBox(box);
+		var transCood = this.transCoord4326ToCurProj(coord);
+		var feature = this.getFeatureFromCoord('Polygon', transCood);
+		return feature;
+	},
+	
+	getCoordByBox: function(box) {
+		var coord = box.split(";");
+		coord.push(coord[0]);
+		return coord;
+	},
+	
+	getFeatureFromCoord: function(geomType, coord) {
+		var shape = {
+			'Point': new ol.geom.Point(coord),
+			'Polygon': new ol.geom.Polygon([coord])
+		}
+
+		var feature = new ol.Feature({
+			geometry: shape[geomType]
+		});
+
+		return feature;
 	},
 	
 	addFeatureToLayer: function(layerId, feature) {
@@ -71,5 +93,16 @@ MapUtils.prototype = {
 			})
         });
 		return style;
+	},
+	
+	transCoord4326ToCurProj: function(coordArray) {
+		var returnCoord = [];
+		for(var i=0, l=coordArray.length; i<l; i++) {
+			var coord = coordArray[i].split(",");
+			var transCoord = ol.proj.transform(coord, "EPSG:4326", this.getCurProj());
+			returnCoord.push(transCoord);
+		}
+		return returnCoord;
 	}
+
 }
