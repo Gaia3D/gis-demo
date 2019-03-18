@@ -19,39 +19,39 @@ var MapWrapper = function(mapConfig) {
 	 */
 
 	var layers = [
-		// 항공 영상
-		/*new ol.layer.Tile({
-			id: 'aerial_layer',
-			visible: true,
-			source: new ol.source.TileWMS({
-				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
-				params: {
-					'FORMAT' : 'image/png',
-					'VERSION' : '1.1.1',
-					'SRS': coordinate,
-					'TILED': true,
-					'LAYERS': [ mapDefaultLayer ]
-				}
-			})
-		}),*/
 		new ol.layer.Tile({
 			id: 'osm_layer',
 			source: new ol.source.OSM()
 	    }),
+		// 항공 영상
+//		new ol.layer.Tile({
+//			id: 'aerial_layer',
+//			visible: true,
+//			source: new ol.source.TileWMS({
+//				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+//				params: {
+//					'FORMAT' : 'image/png',
+//					'VERSION' : '1.1.1',
+//					'SRS': coordinate,
+//					'TILED': true,
+//					'LAYERS': [ mapDefaultLayer ]
+//				}
+//			})
+//		}),
 		// shp 파일
-		new ol.layer.Image({
-			id: 'base_layer',
-			visible: true,
-			source: new ol.source.ImageWMS({
-				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
-				params: {
-					'VERSION' : '1.1.1',
-					'SRS': coordinate,
-					'TILED': true,
-					'LAYERS': ['hmd:ldreg', 'hmd:f01000', 'hmd:a01000', 'hmd:b01000']
-				}
-			})
-		}),
+//		new ol.layer.Image({
+//			id: 'base_layer',
+//			visible: true,
+//			source: new ol.source.ImageWMS({
+//				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+//				params: {
+//					'VERSION' : '1.1.1',
+//					'SRS': coordinate,
+//					'TILED': true,
+//					'LAYERS': ['hmd:ldreg', 'hmd:f01000', 'hmd:a01000', 'hmd:b01000']
+//				}
+//			})
+//		}),
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',
@@ -59,26 +59,6 @@ var MapWrapper = function(mapConfig) {
 			visible: true,
 			source: new ol.source.Vector({
 				features: new ol.Collection()
-			})
-		}),
-		// draw 레이어
-		new ol.layer.Vector({
-			id: 'draw_layer',
-			source: new ol.source.Vector(),
-			style: new ol.style.Style({
-				fill: new ol.style.Fill({
-					color: 'rgba(255, 255, 255, 0.2)'
-				}),
-				stroke: new ol.style.Stroke({
-					color: '#ffcc33',
-					width: 2
-				}),
-				image: new ol.style.Circle({
-					radius: 7,
-					fill: new ol.style.Fill({
-						color: '#ffcc33'
-					})
-				})
 			})
 		})
 	];
@@ -102,7 +82,7 @@ var MapWrapper = function(mapConfig) {
 		projection : proj
 	});
 
-	
+
 	/*** START: control ***/
 	var mousePositionControl = new ol.control.MousePosition({
         //coordinateFormat: ol.coordinate.createStringXY(6),	// 소수점 여섯째
@@ -116,7 +96,7 @@ var MapWrapper = function(mapConfig) {
 	});
 	/*** END: control ***/
 
-	
+
 	/*** START: interaction ***/
 	var selectFilter = false;
     var select = new ol.interaction.Select({
@@ -139,7 +119,7 @@ var MapWrapper = function(mapConfig) {
 			return selectFilter;
 		}
 	});
-    
+
     // 블록 이동
 	var translate = new ol.interaction.Translate({
 		features: select.getFeatures()
@@ -150,7 +130,7 @@ var MapWrapper = function(mapConfig) {
 	});
 	/*** END: interaction ***/
 
-	
+
     var overlay = new ol.Overlay({
         id: 'tooltip-overlay',
         element: document.getElementById('tooltip'),
@@ -171,11 +151,11 @@ var MapWrapper = function(mapConfig) {
 			proj4.defs(key, projCode[key]);
 		});
     };
-    
+
     this.getMap = function() {
     	return map;
     };
-    
+
     this.getSelect = function() {
     	return select;
     };
@@ -184,7 +164,7 @@ var MapWrapper = function(mapConfig) {
     	var boolean = status === 'on' ? true : false;
     	selectFilter = boolean;
     };
-    
+
     this.create = function(element) {
 		// 좌표계 정의
         projDefs();

@@ -15,7 +15,7 @@
 	$('#addBlock').on('click', function() {
 		var layerId = $(this).data('target-layer');
 		GAIA3D.Utils.clearFeatureToLayer(layerId);
-		
+
 		$.ajax({
 			url: GAIA3D.Policy.serverUrl + '/block',
 			//data: {},
@@ -29,27 +29,32 @@
 			}
 		})
 	});
-	
+
 	// 블록 지우기
 	$('#removeBlock').on('click', function() {
 		// select feature
 		var select = GAIA3D.Map.getSelect();
 		GAIA3D.Utils.clearFeatureToSelect(select);
-		
+
 		// block layer clears
 		var layerId = $(this).data('target-layer');
 		GAIA3D.Utils.clearFeatureToLayer(layerId);
 	});
-	
+
 	// 블록 이동
 	$(".translate").on('click', function() {
 		var status = $(this).data('status');
 		var toggleStatus = status === 'on'? 'off' : 'on';
-		
+
+		// toggle
 		$(this).data('status', toggleStatus);
 		var text = $(this).data(toggleStatus);
 		$(this).text(text);
 		GAIA3D.Map.setTranslate(toggleStatus);
+
+		// select feature 비활성화
+		var select = GAIA3D.Map.getSelect();
+		GAIA3D.Utils.clearFeatureToSelect(select);
 	});
 })();
 
@@ -60,7 +65,7 @@ function addBlock(layerId, res) {
 
 	for(var i in res) {
 		feature = null;
-		
+
 		switch(res[i].blockType) {
 		case "geometry":
 			feature = GAIA3D.Utils.getFeatureFromWkt(res[i].geom);
@@ -69,13 +74,13 @@ function addBlock(layerId, res) {
 			feature = GAIA3D.Utils.getFeatureFromBox(res[i].geom);
 			break;
 		}
-		
+
 		if(feature) {
 			feature.setStyle(style);
 			features.push(feature);
 		}
 	}
-	
+
 	// Map에 Features 추가하기
 	GAIA3D.Utils.addFeaturesToLayer(layerId, features);
 }
