@@ -28,6 +28,7 @@ var MapWrapper = function(mapConfig) {
 //			id: 'aerial_layer',
 //			visible: true,
 //			source: new ol.source.TileWMS({
+//	    		// url: 'http://localhost:8080/geoserver/demo/wms',
 //				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
 //				params: {
 //					'FORMAT' : 'image/png',
