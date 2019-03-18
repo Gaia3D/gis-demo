@@ -49,7 +49,7 @@ var MapWrapper = function(mapConfig) {
 //					'VERSION' : '1.1.1',
 //					'SRS': coordinate,
 //					'TILED': true,
-//					'LAYERS': ['hmd:ldreg', 'hmd:f01000', 'hmd:a01000', 'hmd:b01000']
+//					'LAYERS': ['작업공간명:레이어명', 'gaia3d:f01000', 'gaia3d:a01000', 'gaia3d:b01000']
 //				}
 //			})
 //		}),
