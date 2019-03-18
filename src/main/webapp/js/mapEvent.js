@@ -11,6 +11,22 @@
 		GAIA3D.Tools.setRotate(direction);
 	});
 
+	// 그리기
+	$(".draw").on('click', function() {
+		// Point? LineString? Polygon? draw 타입을 확인
+		var type = $(this).data('type');
+
+		// 어떤 레이어에 그림을 그리지? 저장된 레이어 id 불러오기
+		var layerId = $(this).data('target-layer');
+		var layer = GAIA3D.Utils.getLayerById(layerId);
+
+		// 그 레이어의 source를 찾아서
+		var source = layer.getSource();
+
+		// draw geometry 함수 호출!
+		GAIA3D.Tools.drawGeometry(source, type);
+	});
+
 	// 블록 조회
 	$('#addBlock').on('click', function() {
 		var layerId = $(this).data('target-layer');
@@ -33,8 +49,7 @@
 	// 블록 지우기
 	$('#removeBlock').on('click', function() {
 		// select feature
-		var select = GAIA3D.Map.getSelect();
-		GAIA3D.Utils.clearFeatureToSelect(select);
+		GAIA3D.Utils.clearFeatureToSelect();
 
 		// block layer clears
 		var layerId = $(this).data('target-layer');
@@ -53,8 +68,7 @@
 		GAIA3D.Map.setTranslate(toggleStatus);
 
 		// select feature 비활성화
-		var select = GAIA3D.Map.getSelect();
-		GAIA3D.Utils.clearFeatureToSelect(select);
+		GAIA3D.Utils.clearFeatureToSelect();
 	});
 })();
 
