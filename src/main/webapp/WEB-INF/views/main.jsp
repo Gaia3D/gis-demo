@@ -15,6 +15,12 @@
 		<button class="zoom" data-direction="out">지도축소</button>
 		<button class="rotate" data-direction="right">지도회전(&lt;)</button>
 		<button class="rotate" data-direction="left">지도회전(&gt;)</button>
+		<p>그리기</p>
+		<button class="draw" data-target-layer="draw_layer" data-type="Point">점</button>
+		<button class="draw" data-target-layer="draw_layer" data-type="LineString">선</button>
+		<button class="draw" data-target-layer="draw_layer" data-type="Polygon">면</button>
+		<button class="draw" data-target-layer="draw_layer" data-type="Circle">원</button>
+		<button class="draw" data-target-layer="draw_layer" data-type="None">없음</button>
 		<p>블록</p>
 		<button id="addBlock" data-target-layer="block_layer">블록조회</button>
 		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>

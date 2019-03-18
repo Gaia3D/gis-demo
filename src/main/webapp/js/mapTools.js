@@ -40,6 +40,29 @@ function MapTools(map) {
 
 	// 측정
 	this.measureLine = function(type) {
-		
-	}
+
+	};
+
+	// 지오메트리 그리기
+	this.drawGeometry = function(source, type) {
+		this.clearDrawGeometry();
+		if (type !== 'None') {
+			var draw = new ol.interaction.Draw({
+				source: source,
+				type: type
+			});
+			map.addInteraction(draw);
+		}
+	};
+
+	// 그린 지오메트리 삭제
+	this.clearDrawGeometry = function() {
+		map.getInteractions().forEach(function(interaction) {
+			// Draw interaction 삭제
+			if(interaction instanceof ol.interaction.Draw) {
+				map.removeInteraction(interaction);
+			}
+		});
+	};
+
 };

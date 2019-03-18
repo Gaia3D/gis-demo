@@ -11,6 +11,15 @@
 		GAIA3D.Tools.setRotate(direction);
 	});
 
+	// 그리기
+	$(".draw").on('click', function() {
+		var type = $(this).data('type');
+		var layerId = $(this).data('target-layer');
+		var layer = GAIA3D.Utils.getLayerById(layerId);
+		var source = layer.getSource();
+		GAIA3D.Tools.drawGeometry(source, type);
+	});
+
 	// 블록 조회
 	$('#addBlock').on('click', function() {
 		var layerId = $(this).data('target-layer');

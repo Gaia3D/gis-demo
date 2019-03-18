@@ -64,6 +64,13 @@ var MapWrapper = function(mapConfig) {
 			source: new ol.source.Vector({
 				features: new ol.Collection()
 			})
+		}),
+		// draw 레이어
+		new ol.layer.Vector({
+			id: 'draw_layer',
+			source: new ol.source.Vector({
+				wrapX: true
+			})
 		})
 	];
 
