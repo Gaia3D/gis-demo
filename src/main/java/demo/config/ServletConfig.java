@@ -1,4 +1,4 @@
-package hhi.config;
+package demo.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages={"hhi.config, hhi.controller"},
+@ComponentScan(basePackages={"demo.config, demo.controller"},
 				includeFilters={
 					@Filter(type=FilterType.ANNOTATION, value=Component.class),
 					@Filter(type=FilterType.ANNOTATION, value=Controller.class),

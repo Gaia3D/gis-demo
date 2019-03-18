@@ -41,8 +41,8 @@
 var GAIA3D = GAIA3D||{};
 
 GAIA3D.Policy = {}
-GAIA3D.Policy.serverUrl = 'http://localhost:8082';
-GAIA3D.Policy.geoserverDataUrl = 'http://localhost:8080/geoserver';
+GAIA3D.Policy.serverUrl = '${serverUrl}';
+GAIA3D.Policy.geoserverDataUrl = '${mapUrl}';
 GAIA3D.Policy.geoserverDataWorkspace = 'gaia3d';
 GAIA3D.Policy.coordinate = 'EPSG:5187';
 GAIA3D.Policy.mapDefaultLayer = '2017_demo';

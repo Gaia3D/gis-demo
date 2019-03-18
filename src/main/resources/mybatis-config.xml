@@ -10,7 +10,7 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias type="hhi.domain.Block" alias="block"/>
+		<typeAlias type="demo.domain.Block" alias="block"/>
 	</typeAliases>
 
 </configuration>

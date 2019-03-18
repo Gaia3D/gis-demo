@@ -1,8 +1,8 @@
-package hhi.service;
+package demo.service;
 
 import java.util.List;
 
-import hhi.domain.Block;
+import demo.domain.Block;
 
 
 /**

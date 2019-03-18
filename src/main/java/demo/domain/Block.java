@@ -1,4 +1,4 @@
-package hhi.domain;
+package demo.domain;
 
 import lombok.Getter;
 import lombok.Setter;

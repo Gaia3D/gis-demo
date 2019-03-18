@@ -1,10 +1,10 @@
-package hhi.persistence;
+package demo.persistence;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import hhi.domain.Block;
+import demo.domain.Block;
 
 /**
  * @author kimhj

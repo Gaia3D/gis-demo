@@ -1,4 +1,4 @@
-package hhi.config;
+package demo.config;
 
 import javax.sql.DataSource;
 
@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
@@ -19,13 +20,14 @@ import org.springframework.stereotype.Service;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-@MapperScan("hhi.persistence")
+@MapperScan("demo.persistence")
 @Configuration
-@ComponentScan(basePackages={"hhi.service, hhi.persistence"},
+@ComponentScan(basePackages={"demo.service, demo.persistence"},
                 includeFilters={@Filter(type = FilterType.ANNOTATION, value = Component.class),
                                 @Filter(type = FilterType.ANNOTATION, value = Service.class),
                                 @Filter(type = FilterType.ANNOTATION, value = Repository.class)},
                 excludeFilters=@Filter(type = FilterType.ANNOTATION, value = Controller.class))
+@PropertySource("classpath:/demo.properties")
 public class RootConfig {
 
 	@Value("${spring.datasource.driver-class-name}")

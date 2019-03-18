@@ -1,4 +1,4 @@
-package hhi.service.impl;
+package demo.service.impl;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import hhi.domain.Block;
-import hhi.persistence.BlockMapper;
-import hhi.service.BlockService;
+import demo.domain.Block;
+import demo.persistence.BlockMapper;
+import demo.service.BlockService;
 
 
 /**
