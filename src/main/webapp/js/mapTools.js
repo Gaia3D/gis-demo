@@ -45,12 +45,15 @@ function MapTools(map) {
 
 	// 지오메트리 그리기
 	this.drawGeometry = function(source, type) {
+		// 활성화 된 draw가 있으면 삭제하고
 		this.clearDrawGeometry();
+
 		if (type !== 'None') {
 			var draw = new ol.interaction.Draw({
 				source: source,
 				type: type
 			});
+			// 맵에 interaction 추가
 			map.addInteraction(draw);
 		}
 	};

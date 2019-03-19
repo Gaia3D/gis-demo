@@ -22,26 +22,26 @@ var MapWrapper = function(mapConfig) {
 	 */
 
 	var layers = [
-//		new ol.layer.Tile({
-//			id: 'osm_layer',
-//			source: new ol.source.OSM()
-//	    }),
-		// 항공 영상
 		new ol.layer.Tile({
-			id: 'aerial_layer',
-			visible: true,
-			source: new ol.source.TileWMS({
-	    		// url: 'http://localhost:8080/geoserver/gaia3d/wms',
-				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
-				params: {
-					'FORMAT' : 'image/png',
-					'VERSION' : '1.1.1',
-					'SRS': coordinate,
-					'TILED': true,
-					'LAYERS': [ mapDefaultLayer ]
-				}
-			})
-		}),
+			id: 'osm_layer',
+			source: new ol.source.OSM()
+	    }),
+		// 항공 영상
+//		new ol.layer.Tile({
+//			id: 'aerial_layer',
+//			visible: true,
+//			source: new ol.source.TileWMS({
+//	    		// url: 'http://localhost:8080/geoserver/gaia3d/wms',
+//				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+//				params: {
+//					'FORMAT' : 'image/png',
+//					'VERSION' : '1.1.1',
+//					'SRS': coordinate,
+//					'TILED': true,
+//					'LAYERS': [ mapDefaultLayer ]
+//				}
+//			})
+//		}),
 		// shp 파일
 //		new ol.layer.Image({
 //			id: 'base_layer',

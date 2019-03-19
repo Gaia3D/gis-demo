@@ -13,10 +13,17 @@
 
 	// 그리기
 	$(".draw").on('click', function() {
+		// Point? LineString? Polygon? draw 타입을 확인
 		var type = $(this).data('type');
+
+		// 어떤 레이어에 그림을 그리지? 저장된 레이어 id 불러오기
 		var layerId = $(this).data('target-layer');
 		var layer = GAIA3D.Utils.getLayerById(layerId);
+
+		// 그 레이어의 source를 찾아서
 		var source = layer.getSource();
+
+		// draw geometry 함수 호출!
 		GAIA3D.Tools.drawGeometry(source, type);
 	});
 
