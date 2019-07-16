@@ -116,8 +116,13 @@ MapUtils.prototype = {
 	/**
 	 * 선택한 객체 모두 지우기
 	 */
-	clearFeatureToSelect: function(select) {
-		select.getFeatures().clear();
+	clearFeatureToSelect: function() {
+		this.map.getInteractions().forEach(function(interaction) {
+			if(interaction instanceof ol.interaction.Select) {
+				// Select interaction의 Feature 삭제
+				interaction.getFeatures().clear();
+			}
+		});
 	},
 
 	/**

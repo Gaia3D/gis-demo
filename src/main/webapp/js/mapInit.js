@@ -167,10 +167,6 @@ var MapWrapper = function(mapConfig) {
     	return map;
     };
 
-    this.getSelect = function() {
-    	return select;
-    };
-
     this.setTranslate = function(status) {
     	var boolean = status === 'on' ? true : false;
     	selectFilter = boolean;

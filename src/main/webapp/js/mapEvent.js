@@ -49,8 +49,7 @@
 	// 블록 지우기
 	$('#removeBlock').on('click', function() {
 		// select feature
-		var select = GAIA3D.Map.getSelect();
-		GAIA3D.Utils.clearFeatureToSelect(select);
+		GAIA3D.Utils.clearFeatureToSelect();
 
 		// block layer clears
 		var layerId = $(this).data('target-layer');
@@ -69,8 +68,7 @@
 		GAIA3D.Map.setTranslate(toggleStatus);
 
 		// select feature 비활성화
-		var select = GAIA3D.Map.getSelect();
-		GAIA3D.Utils.clearFeatureToSelect(select);
+		GAIA3D.Utils.clearFeatureToSelect();
 	});
 })();
 
