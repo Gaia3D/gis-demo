@@ -36,7 +36,7 @@
 			url: GAIA3D.Policy.serverUrl + '/block',
 			//data: {},
 			dataType: 'json',
-			type: 'post',
+			type: 'get',
 			success: function(res) {
 				addBlock(layerId, res);
 			},
