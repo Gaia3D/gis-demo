@@ -19,7 +19,9 @@
 		<button class="draw" data-target-layer="draw_layer" data-type="LineString">선</button>
 		<button class="draw" data-target-layer="draw_layer" data-type="Polygon">면</button>
 		<button class="draw" data-target-layer="draw_layer" data-type="Circle">원</button>
-		<button class="draw" data-target-layer="draw_layer" data-type="None">없음</button>
+		<!-- <button class="draw" data-target-layer="draw_layer" data-type="None">없음</button>
+		<button class="clear" data-target-layer="draw_layer">지우기</button> -->
+		<button class="clear" data-target-layer="draw_layer" data-type="None">그리기 종료</button>
 		<p>블록</p>
 		<button id="addBlock" data-target-layer="block_layer">블록조회</button>
 		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>
@@ -38,8 +40,26 @@
 <script type="text/javascript" src="./externlib/jquery-3.3.1/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="./externlib/ol46/ol-debug.js"></script>
 <script type="text/javascript" src="./externlib/proj4js-2.4.3/proj4.min.js"></script>
-<script type="text/javascript" src="./js/mapInit.js"></script>
-<script type="text/javascript" src="./js/mapTools.js"></script>
 <script type="text/javascript" src="./js/mapEvent.js"></script>
+<script type="text/javascript" src="./js/mapInit.js"></script>
+<script type="text/javascript">
+// 선언
+var GAIA3D = GAIA3D||{
+	Policy: {
+		// TODO: DB관리 필요
+		serverUrl: 'http://localhost:8081',
+		geoserverDataUrl: 'http://localhost:8080/geoserver',
+		geoserverDataWorkspace: 'demo',
+		coordinate: 'EPSG:5179',
+		mapDefaultLayer: 'seoul_group',
+		mapExtent: [531371.84, 967246.47, 1576674.68, 2274021.31],
+		mapCenter: [947688.527800, 1946723.497262]
+	}
+};
 
+// 맵 생성
+GAIA3D.GIS = new MapWrapper(GAIA3D.Policy);
+GAIA3D.Map = GAIA3D.GIS.create('map');
+
+</script>
 </html>

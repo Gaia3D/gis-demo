@@ -1,7 +1,7 @@
 var MapWrapper = function(mapConfig) {
 
 	if (!(this instanceof MapWrapper)) {
-		throw new Error("New 를 통해 생성 하십시오.");
+		throw new Error('New 를 통해 생성 하십시오.');
 	}
 
 	var geoserverDataUrl = mapConfig.geoserverDataUrl;
@@ -23,39 +23,39 @@ var MapWrapper = function(mapConfig) {
 
 	var layers = [
 		new ol.layer.Tile({
-			id: 'osm_layer',
+			// https://openlayers.org/en/master/examples/reprojection.html
 			source: new ol.source.OSM()
-	    }),
+		}),
 		// 항공 영상
-//		new ol.layer.Tile({
-//			id: 'aerial_layer',
-//			visible: true,
-//			source: new ol.source.TileWMS({
-//	    		// url: 'http://localhost:8080/geoserver/gaia3d/wms',
-//				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
-//				params: {
-//					'FORMAT' : 'image/png',
-//					'VERSION' : '1.1.1',
-//					'SRS': coordinate,
-//					'TILED': true,
-//					'LAYERS': [ mapDefaultLayer ]
-//				}
-//			})
-//		}),
-		// shp 파일
-//		new ol.layer.Image({
-//			id: 'base_layer',
-//			visible: true,
-//			source: new ol.source.ImageWMS({
-//				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
-//				params: {
-//					'VERSION' : '1.1.1',
-//					'SRS': coordinate,
-//					'TILED': true,
-//					'LAYERS': ['작업공간명:레이어명', 'gaia3d:f01000', 'gaia3d:a01000', 'gaia3d:b01000']
-//				}
-//			})
-//		}),
+		new ol.layer.Tile({
+			id: 'aerial_layer',
+			visible: true,
+			source: new ol.source.TileWMS({
+	    		// url: 'http://localhost:8080/geoserver/demo/wms',
+				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+				params: {
+					'FORMAT' : 'image/png',
+					'VERSION' : '1.1.1',
+					'SRS': coordinate,
+					'TILED': true,
+					'LAYERS': [ mapDefaultLayer ]
+				}
+			})
+		}),
+		// shp 레이어
+		new ol.layer.Image({
+			id: 'wms_layer',
+			visible: true,
+			source: new ol.source.ImageWMS({
+				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+				params: {
+					'VERSION' : '1.1.1',
+					'SRS': coordinate,
+					'TILED': true,
+					'LAYERS': ['demo:building', 'demo:road', 'demo:road_link']	//'demo:emd', 
+				}
+			})
+		}),
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',
@@ -89,7 +89,7 @@ var MapWrapper = function(mapConfig) {
 
 	var view = new ol.View({
 		center: mapCenter,
-		zoom: 11,
+		zoom: 12,
 		extent: mapExtent,
 		projection : proj
 	});
@@ -217,7 +217,7 @@ var MapWrapper = function(mapConfig) {
 		getLayerById: function(layerId) {
 			var layer = null;
 			if(layerId){
-				var layers = this.map.getLayers().getArray();
+				var layers = map.getLayers().getArray();
 				for(var i in layers){	 // 브라우저 호환성 - ie6~, chrome
 					if(layers[i].get('id') === layerId){
 						layer = layers[i];
@@ -254,7 +254,7 @@ var MapWrapper = function(mapConfig) {
 		 * Box를 Polygon으로 변경
 		 */
 		getPolygonFromBox: function(box) {
-			var polygon = box.split(";");
+			var polygon = box.split(';');
 			polygon.push(polygon[0]);
 			return polygon;
 		},
@@ -276,18 +276,78 @@ var MapWrapper = function(mapConfig) {
 		},
 
 		/**
+		 * 지도의 줌 레벨을 변경
+		 */
+		setZoom: function(direction) {
+			var zoom = 0;
+			var zoomFactor = 1;
+			var currentZoom = view.getZoom();
+			if(direction === 'in') {
+				zoom = currentZoom + zoomFactor;
+			} else if(direction === 'out') {
+				zoom = currentZoom - zoomFactor;
+			}
+	
+			view.animate({
+				zoom: zoom,
+				duration: 700
+			});
+		},
+
+		/**
+		 * 지도를 회전
+		 */
+		setRotate: function(direction) {
+			var rotation = 0;
+			if(direction === 'left') {
+				rotation = view.getRotation() + Math.PI/2
+			} else if(direction === 'right') {
+				rotation = view.getRotation() - Math.PI/2
+			}
+	
+			view.animate({
+				rotation: rotation
+			});
+		},
+
+		/**
+		 * 블록 객체를 이동
+		 */
+		setTranslate: function(status) {
+			var boolean = status === 'on' ? true : false;
+			selectFilter = boolean;
+		},
+
+		/**
 		 * 4326 데이터를 현재 좌표계로 변경
 		 */
 		transCoord4326ToCurProj: function(coordArray) {
 			var returnCoord = [];
 			for(var i=0, l=coordArray.length; i<l; i++) {
-				var coord = coordArray[i].split(",");
-				var transCoord = ol.proj.transform(coord, "EPSG:4326", this.getCurProj());
+				var coord = coordArray[i].split(',');
+				var transCoord = ol.proj.transform(coord, 'EPSG:4326', this.getCurProj());
 				returnCoord.push(transCoord);
 			}
 			return returnCoord;
 		},
 
+		/**
+		 * 그리기 객체 추가
+		 */
+		drawGeometry: function(source, type) {
+			// 활성화 된 draw가 있으면 삭제하고
+			this.clearDrawInteraction();
+	
+			if (type !== 'None') {
+				var draw = new ol.interaction.Draw({
+					source: source,
+					type: type
+				});
+				// 맵에 interaction 추가
+				map.addInteraction(draw);
+			}
+		},
+		
 		/**
 		 * 레이어에 피쳐 추가 (단일)
 		 */
@@ -308,7 +368,7 @@ var MapWrapper = function(mapConfig) {
 		 * 선택한 객체 모두 지우기
 		 */
 		clearFeatureToSelect: function() {
-			this.map.getInteractions().forEach(function(interaction) {
+			map.getInteractions().forEach(function(interaction) {
 				if(interaction instanceof ol.interaction.Select) {
 					// Select interaction의 Feature 삭제
 					interaction.getFeatures().clear();
@@ -322,6 +382,18 @@ var MapWrapper = function(mapConfig) {
 		clearFeatureToLayer: function(layerId) {
 			var layer = this.getLayerById(layerId);
 			layer.getSource().clear();
+		},
+
+		/**
+		 * 활성화 된 interaction 삭제
+		 */
+		clearDrawInteraction: function() {
+			map.getInteractions().forEach(function(interaction) {
+				// Draw interaction 삭제
+				if(interaction instanceof ol.interaction.Draw) {
+					map.removeInteraction(interaction);
+				}
+			});
 		},
 
 		/**

@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +23,12 @@ import demo.service.BlockService;
 @Controller
 @RequestMapping("/")
 public class BlockController {
-
-	@Value("${server.url}")
-	private String serverUrl;
-	@Value("${map.url}")
-	private String mapUrl;
-
 	@Autowired
 	BlockService blockService;
 
 	@RequestMapping(value="/")
 	public ModelAndView index(HttpServletRequest request, Model model) {
-
-		model.addAttribute("serverUrl", serverUrl);
-		model.addAttribute("mapUrl", mapUrl);
+		model.addAttribute("data", "");
 		return new ModelAndView("/index");
 	}
 
