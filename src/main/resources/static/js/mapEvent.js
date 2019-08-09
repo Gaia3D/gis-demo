@@ -82,6 +82,21 @@
 		// select feature 비활성화
 		GAIA3D.GIS.clearFeatureToSelect();
 	});
+
+	// 건물 정보 조회
+	$('#getInfo').on('click', function() {
+		var status = $(this).data('status');
+		var toggleStatus = status === 'on'? 'off' : 'on';
+
+		// toggle
+		$(this).data('status', toggleStatus);
+		var text = $(this).data(toggleStatus);
+		$(this).text(text);
+
+		if(toggleStatus==='on') {
+			alert('지도 위의 건물을 클릭해보세요.');
+		}
+	});
 })();
 
 function addBlock(layerId, res) {

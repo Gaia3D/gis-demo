@@ -22,8 +22,11 @@ min-height: 500px;
 }
 .mapControl {
 position: absolute;
-top: 10px;
-left: 10px;
+padding: 0 20px;
+background: white;
+height: 100%;
+min-height: 500px;
+overflow: auto;
 }
 .mapControl > button {
 display: block;

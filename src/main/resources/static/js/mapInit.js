@@ -175,8 +175,10 @@ var MapWrapper = function(mapConfig) {
 		 * 맵 성생
 		 */
 		create: function(element) {
+			var gisMethod = this;
+
 			// 좌표계 정의
-			this.projDefs();
+			gisMethod.projDefs();
 
 			// 맵 생성
 			map = new ol.Map({
@@ -198,6 +200,10 @@ var MapWrapper = function(mapConfig) {
 			map.addInteraction(select);
 			map.addInteraction(translate);
 			map.addInteraction(mouseWheelZoom);
+			map.on('singleclick', function(event){
+				if (event.dragging) return;
+				gisMethod.getGeoInfo(event);
+			});
 
 			return map;
 		},
@@ -411,6 +417,37 @@ var MapWrapper = function(mapConfig) {
 				})
 			});
 			return style;
+		},
+		
+		/**
+		 * 객체의 정보를 취득
+		 */
+		getGeoInfo: function(event) {
+			var viewResolution = map.getView().getResolution();
+			var layer = this.getLayerById('wms_layer');
+			var url = layer.getSource().getGetFeatureInfoUrl(
+				event.coordinate, 
+				viewResolution, 
+				this.getCurProj().getCode(),
+				{'INFO_FORMAT': "application/json", 'X': 50, 'Y': 50, "FEATURE_COUNT": 50}
+			);
+			if (url) {
+				$.ajax({
+					url: url,
+					headers: {'X-Requested-With': 'XMLHttpRequest'},
+					type: 'get',
+					dataType: 'json',
+					success: function(res) {
+						var features = res.features;
+						if(features.length > 0){
+							debugger
+						}
+					},
+					error: function(request, status, error) {
+						debugger
+					}
+				});
+			}
 		}
 	}	
 };

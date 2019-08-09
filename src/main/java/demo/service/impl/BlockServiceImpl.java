@@ -24,8 +24,7 @@ public class BlockServiceImpl implements BlockService {
 	/** 블록 목록 조회  **/
 	@Transactional(readOnly=true)
 	public List<Block> getBlockList(Block block) {
-		List<Block> list = null;
-		list = blockMapper.getBlockList(block);
+		List<Block> list = blockMapper.getBlockList(block);
 		return list;
 	}
 }
