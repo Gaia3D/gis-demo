@@ -52,7 +52,7 @@ var MapWrapper = function(mapConfig) {
 					'VERSION' : '1.1.1',
 					'SRS': coordinate,
 					'TILED': true,
-					'LAYERS': ['demo:building', 'demo:road', 'demo:road_link']	//'demo:emd', 
+					'LAYERS': ['demo:building', 'demo:road', 'demo:road_link']	//'demo:emd',
 				}
 			})
 		}),
@@ -161,6 +161,10 @@ var MapWrapper = function(mapConfig) {
 	 * Public
 	 */
 	return {
+
+		layerState: {
+			building: false
+		},
 
 		/**
 		 * 좌표계 정의
@@ -293,7 +297,7 @@ var MapWrapper = function(mapConfig) {
 			} else if(direction === 'out') {
 				zoom = currentZoom - zoomFactor;
 			}
-	
+
 			view.animate({
 				zoom: zoom,
 				duration: 700
@@ -310,7 +314,7 @@ var MapWrapper = function(mapConfig) {
 			} else if(direction === 'right') {
 				rotation = view.getRotation() - Math.PI/2
 			}
-	
+
 			view.animate({
 				rotation: rotation
 			});
@@ -343,7 +347,7 @@ var MapWrapper = function(mapConfig) {
 		drawGeometry: function(source, type) {
 			// 활성화 된 draw가 있으면 삭제하고
 			this.clearDrawInteraction();
-	
+
 			if (type !== 'None') {
 				var draw = new ol.interaction.Draw({
 					source: source,
@@ -353,7 +357,7 @@ var MapWrapper = function(mapConfig) {
 				map.addInteraction(draw);
 			}
 		},
-		
+
 		/**
 		 * 레이어에 피쳐 추가 (단일)
 		 */
@@ -418,36 +422,44 @@ var MapWrapper = function(mapConfig) {
 			});
 			return style;
 		},
-		
+
 		/**
 		 * 객체의 정보를 취득
 		 */
 		getGeoInfo: function(event) {
-			var viewResolution = map.getView().getResolution();
-			var layer = this.getLayerById('wms_layer');
-			var url = layer.getSource().getGetFeatureInfoUrl(
-				event.coordinate, 
-				viewResolution, 
-				this.getCurProj().getCode(),
-				{'INFO_FORMAT': "application/json", 'X': 50, 'Y': 50, "FEATURE_COUNT": 50}
-			);
-			if (url) {
-				$.ajax({
-					url: url,
-					headers: {'X-Requested-With': 'XMLHttpRequest'},
-					type: 'get',
-					dataType: 'json',
-					success: function(res) {
-						var features = res.features;
-						if(features.length > 0){
+			var onBuildingLayer = GAIA3D.GIS.layerState.building;
+
+			// 건물 버튼 on
+			if(onBuildingLayer) {
+				var viewResolution = map.getView().getResolution();
+				var layer = this.getLayerById('wms_layer');
+				var targetLayer = 'demo:building';	// 없으면 all
+				var url = layer.getSource().getGetFeatureInfoUrl(
+					event.coordinate,
+					viewResolution,
+					this.getCurProj().getCode(),
+					{'INFO_FORMAT': 'application/json', 'X': 50, 'Y': 50, 'FEATURE_COUNT': 50, 'QUERY_LAYERS': targetLayer}
+				);
+				if (url) {
+					$.ajax({
+						url: url,
+						headers: {'X-Requested-With': 'XMLHttpRequest'},
+						type: 'get',
+						dataType: 'json',
+						success: function(res) {
+							var features = res.features;
+							if(features.length > 0){
+								for(var i=0,len=features.length; i<len; i++) {
+									alert(features[i].id);
+								}
+							}
+						},
+						error: function(request, status, error) {
 							debugger
 						}
-					},
-					error: function(request, status, error) {
-						debugger
-					}
-				});
+					});
+				}
 			}
 		}
-	}	
+	}
 };

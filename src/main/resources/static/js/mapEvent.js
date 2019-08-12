@@ -1,4 +1,5 @@
-(function() {
+$(document).ready(function() {
+
 	// 지도 확대/축소
 	$('.zoom').on('click', function() {
 		var direction = $(this).data('direction');
@@ -70,14 +71,12 @@
 
 	// 블록 이동
 	$('.translate').on('click', function() {
-		var status = $(this).data('status');
-		var toggleStatus = status === 'on'? 'off' : 'on';
+		var changeStatus = ($(this).data('status') === 'on'? 'off' : 'on');
 
-		// toggle
-		$(this).data('status', toggleStatus);
-		var text = $(this).data(toggleStatus);
-		$(this).text(text);
-		GAIA3D.GIS.setTranslate(toggleStatus);
+		// status toggle
+		$(this).data('status', changeStatus);
+		$(this).text($(this).data(changeStatus));
+		GAIA3D.GIS.setTranslate(changeStatus);
 
 		// select feature 비활성화
 		GAIA3D.GIS.clearFeatureToSelect();
@@ -85,19 +84,18 @@
 
 	// 건물 정보 조회
 	$('#getInfo').on('click', function() {
-		var status = $(this).data('status');
-		var toggleStatus = status === 'on'? 'off' : 'on';
+		var changeStatus = ($(this).data('status') === 'on'? 'off' : 'on');
 
-		// toggle
-		$(this).data('status', toggleStatus);
-		var text = $(this).data(toggleStatus);
-		$(this).text(text);
+		// status toggle
+		$(this).data('status', changeStatus);
+		$(this).text($(this).data(changeStatus));
+		GAIA3D.GIS.layerState.building = (changeStatus === 'on');
 
-		if(toggleStatus==='on') {
+		if(changeStatus === 'on') {
 			alert('지도 위의 건물을 클릭해보세요.');
 		}
 	});
-})();
+});
 
 function addBlock(layerId, res) {
 	var feature = null;
