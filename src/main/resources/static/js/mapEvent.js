@@ -117,7 +117,6 @@ $(document).ready(function() {
 function addBlock(layerId, res) {
 	var feature = null;
 	var features = [];
-	var style = GAIA3D.GIS.getBlockStyle();
 
 	for(var i in res) {
 		feature = null;
@@ -132,7 +131,7 @@ function addBlock(layerId, res) {
 		}
 
 		if(feature) {
-			feature.setStyle(style);
+			feature.setStyle(GAIA3D.Style.block);
 			features.push(feature);
 		}
 	}

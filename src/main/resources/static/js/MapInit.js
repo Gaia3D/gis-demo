@@ -415,23 +415,6 @@ var MapInit = function(mapConfig) {
 		},
 
 		/**
-		 * 블록의 스타일 지정
-		 */
-		getBlockStyle: function() {
-			var style = new ol.style.Style({
-				fill: new ol.style.Fill({
-					color: 'rgba(255, 0, 0, 1)'
-				}),
-				stroke: new ol.style.Stroke({
-					color: 'rgba(0, 0, 0, 0.5)',
-					//lineDash: [10, 10],
-					width: 2
-				})
-			});
-			return style;
-		},
-
-		/**
 		 * 객체의 정보를 취득
 		 */
 		getGeoInfo: function(event) {

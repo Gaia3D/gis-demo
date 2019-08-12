@@ -1,5 +1,5 @@
 GAIA3D.Style = {
-	Point1: [
+	point1: [
 		new ol.style.Style({
             image: new ol.style.Circle({
                 radius: 8,
@@ -9,7 +9,7 @@ GAIA3D.Style = {
         })
 	],
 
-	Point2: [
+	point2: [
         new ol.style.Style({
             image: new ol.style.Circle({
                 radius: 8,
@@ -19,7 +19,7 @@ GAIA3D.Style = {
         })
     ],
 
-	Point3: [
+	point3: [
 		new ol.style.Style({
             image: new ol.style.Circle({
                 radius: 8,
@@ -27,5 +27,18 @@ GAIA3D.Style = {
                 stroke: new ol.style.Stroke({color: 'blue' ,width: 2})
             })
         })
+    ],
+
+    block: [
+    	new ol.style.Style({
+			fill: new ol.style.Fill({
+				color: 'rgba(255, 0, 0, 0.7)'
+			}),
+			stroke: new ol.style.Stroke({
+				color: 'rgba(0, 0, 255, 1)',
+				//lineDash: [10, 10],
+				width: 3
+			})
+		})
     ]
 };
