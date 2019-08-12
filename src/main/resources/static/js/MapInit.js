@@ -1,6 +1,6 @@
-var MapWrapper = function(mapConfig) {
+var MapInit = function(mapConfig) {
 
-	if (!(this instanceof MapWrapper)) {
+	if (!(this instanceof MapInit)) {
 		throw new Error('New 를 통해 생성 하십시오.');
 	}
 
@@ -70,6 +70,14 @@ var MapWrapper = function(mapConfig) {
 			id: 'draw_layer',
 			source: new ol.source.Vector({
 				wrapX: true
+			})
+		}),
+		// point 레이어
+		new ol.layer.Vector({
+			id: 'point_layer',
+			visible: true,
+			source: new ol.source.Vector({
+				features: new ol.Collection()
 			})
 		})
 	];

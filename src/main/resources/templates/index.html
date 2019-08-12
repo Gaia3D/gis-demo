@@ -22,6 +22,11 @@
 		<!-- <button class="draw" data-target-layer="draw_layer" data-type="None">없음</button>
 		<button class="clear" data-target-layer="draw_layer">지우기</button> -->
 		<button class="clear" data-target-layer="draw_layer" data-type="None">그리기 종료</button>
+		<p>포인트</p>
+		<button class="point" data-lon="126.904865" data-lat="37.519971" data-target-layer="point_layer" data-style="Point1">1</button>
+		<button class="point" data-lon="126.907945" data-lat="37.519323" data-target-layer="point_layer" data-style="Point2">2</button>
+		<button class="point" data-lon="126.910643" data-lat="37.518753" data-target-layer="point_layer" data-style="Point3">3</button>
+		<button class="clear" data-target-layer="point_layer">지우기</button>
 		<p>블록</p>
 		<button id="addBlock" data-target-layer="block_layer">블록조회</button>
 		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>
@@ -43,8 +48,9 @@
 <script type="text/javascript" src="./externlib/ol46/ol-debug.js"></script>
 <script type="text/javascript" src="./externlib/proj4js-2.4.3/proj4.min.js"></script>
 <script type="text/javascript" src="./js/prop.js"></script>
+<script type="text/javascript" src="./js/style.js"></script>
 <script type="text/javascript" src="./js/mapEvent.js"></script>
-<script type="text/javascript" src="./js/mapInit.js"></script>
+<script type="text/javascript" src="./js/MapInit.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	// 선언
@@ -60,10 +66,10 @@ $(document).ready(function() {
 			mapCenter: [947688.527800, 1946723.497262]
 		}
 	});
-	
+
 	// 맵 생성
-	GAIA3D.GIS = new MapWrapper(GAIA3D.Policy);
-	GAIA3D.Map = GAIA3D.GIS.create('map');	
+	GAIA3D.GIS = new MapInit(GAIA3D.Policy);
+	GAIA3D.Map = GAIA3D.GIS.create('map');
 });
 
 </script>

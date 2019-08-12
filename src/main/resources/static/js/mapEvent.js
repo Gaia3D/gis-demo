@@ -40,6 +40,23 @@ $(document).ready(function() {
 		}
 	});
 
+	// 점 추가
+	$('.point').on('click', function() {
+		var lon = $(this).data('lon');
+		var lat = $(this).data('lat');
+		var style = $(this).data('style');
+		var layerId = $(this).data('target-layer');
+
+		// 좌표
+		var coord = [lon, lat];
+		var transCoord = ol.proj.transform(coord, 'EPSG:4326', GAIA3D.GIS.getCurProj())
+		var feature = GAIA3D.GIS.getFeatureFromCoord('Point', transCoord);
+		// 스타일
+		feature.setStyle(GAIA3D.Style[style]);
+		// 추가
+		GAIA3D.GIS.addFeatureToLayer(layerId, feature);
+	});
+
 	// 블록 조회
 	$('#addBlock').on('click', function() {
 		var layerId = $(this).data('target-layer');
