@@ -155,7 +155,7 @@ var MapInit = function(mapConfig) {
 	/*** END: interaction ***/
 
 
-    var overlay = new ol.Overlay({
+    var tooltipOverlay = new ol.Overlay({
         id: 'tooltip-overlay',
         element: document.getElementById('tooltip'),
         autoPan: true,
@@ -164,6 +164,17 @@ var MapInit = function(mapConfig) {
     	},
         offset: [10, 0],
         positioning: 'bottom-left'
+    });
+
+    var popupOverlay = new ol.Overlay({
+    	id: 'popup-overlay',
+    	element: document.getElementById('popup'),
+    	autoPan: true,
+    	autoPanAnimation: {
+    		duration: 250
+    	},
+    	offset: [10, 10],
+    	positioning: 'top'
     });
 
 	// 지도객체
@@ -206,7 +217,7 @@ var MapInit = function(mapConfig) {
 					mousePositionControl
 				]),
 				interactions: ol.interaction.defaults(),
-				overlays: [overlay],
+				overlays: [tooltipOverlay, popupOverlay],
 				layers: layers,
 				view: view,
 				target: element
