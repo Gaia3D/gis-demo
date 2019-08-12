@@ -27,6 +27,7 @@ var MapInit = function(mapConfig) {
 			source: new ol.source.OSM()
 		}),
 		// 항공 영상
+		/*
 		new ol.layer.Tile({
 			id: 'aerial_layer',
 			visible: true,
@@ -42,7 +43,9 @@ var MapInit = function(mapConfig) {
 				}
 			})
 		}),
+		*/
 		// shp 레이어
+		/*
 		new ol.layer.Image({
 			id: 'wms_layer',
 			visible: true,
@@ -56,6 +59,7 @@ var MapInit = function(mapConfig) {
 				}
 			})
 		}),
+		*/
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',
@@ -214,7 +218,18 @@ var MapInit = function(mapConfig) {
 			map.addInteraction(mouseWheelZoom);
 			map.on('singleclick', function(event){
 				if (event.dragging) return;
-				gisMethod.getGeoInfo(event);
+
+				// 건물 버튼 on
+				var onBuildingLayer = GAIA3D.GIS.layerState.building;
+				if(onBuildingLayer) {
+					gisMethod.getGeoInfo(event);
+				}
+
+				// 팝업 on
+				var onBuildingLayer = GAIA3D.GIS.layerState.building;
+				if(onBuildingLayer) {
+					gisMethod.getGeoInfo(event);
+				}
 			});
 
 			return map;
@@ -418,12 +433,9 @@ var MapInit = function(mapConfig) {
 		 * 객체의 정보를 취득
 		 */
 		getGeoInfo: function(event) {
-			var onBuildingLayer = GAIA3D.GIS.layerState.building;
-
-			// 건물 버튼 on
-			if(onBuildingLayer) {
+			var layer = this.getLayerById('wms_layer');
+			if(layer) {
 				var viewResolution = map.getView().getResolution();
-				var layer = this.getLayerById('wms_layer');
 				var targetLayer = 'demo:building';	// 없으면 all
 				var url = layer.getSource().getGetFeatureInfoUrl(
 					event.coordinate,

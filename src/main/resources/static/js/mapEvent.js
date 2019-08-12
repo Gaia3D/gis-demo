@@ -101,6 +101,12 @@ $(document).ready(function() {
 
 	// 건물 정보 조회
 	$('#getInfo').on('click', function() {
+		var layer = GAIA3D.GIS.getLayerById('wms_layer');
+		if(!layer || layer == null) {
+			alert('WMS 레이어를 추가해주세요.');
+			return false;
+		}
+
 		var changeStatus = ($(this).data('status') === 'on'? 'off' : 'on');
 
 		// status toggle
