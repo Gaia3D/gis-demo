@@ -17,8 +17,9 @@ var MapInit = function(mapConfig) {
 	 * 3. view 정의
 	 * 4. control 정의
 	 * 5. interaction 정의
+	 * 6. overlay 정의
 	 *
-	 * 6. map 정의
+	 * 7. map 정의
 	 */
 
 	var layers = [
@@ -237,10 +238,7 @@ var MapInit = function(mapConfig) {
 				}
 
 				// 팝업 on
-				var onBuildingLayer = GAIA3D.GIS.layerState.building;
-				if(onBuildingLayer) {
-					gisMethod.getGeoInfo(event);
-				}
+				gisMethod.toggleOverlay(event);
 			});
 
 			return map;
@@ -474,6 +472,13 @@ var MapInit = function(mapConfig) {
 					});
 				}
 			}
+		},
+
+		/**
+		 * 팝업 on/off
+		 */
+		toggleOverlay: function(event) {
+
 		}
 	}
 };
