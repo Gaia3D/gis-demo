@@ -40,5 +40,29 @@ GAIA3D.Style = {
 				width: 3
 			})
 		})
+    ],
+
+    marker: [
+		new ol.style.Style({
+			image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+				//rotation: 180*Math.PI/180,
+				rotateWithView: true,
+				scale : 0.5,
+				anchor: [0.5, 0.5],
+                anchorOrigin: 'bottom-left',
+				anchorXUnits: 'fraction',
+		        anchorYUnits: 'pixels',
+                opacity: 1,
+				src: './images/marker.png'
+	        })),
+	        text: new ol.style.Text({
+                text: '126번 정류장',
+                font: '15px sans-serif',
+                fill: new ol.style.Fill({
+                    color: 'black'
+                }),
+                offsetY: -50
+            })
+        })
     ]
 };
