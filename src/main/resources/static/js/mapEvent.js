@@ -118,6 +118,36 @@ $(document).ready(function() {
 			alert('지도 위의 건물을 클릭해보세요.');
 		}
 	});
+	// 도로 레이어 on / off
+	$('#getRoadInfo').on('click', function() {
+		var layer = GAIA3D.GIS.getLayerById('wms_layer');
+		var changeStatus = ($(this).data('status') === 'on'? 'off' : 'on');
+		var layerFlag = ($(this).data('status') === 'on'? false : true);
+		// status toggle
+		$(this).data('status', changeStatus);
+		$(this).text($(this).data(changeStatus));
+		layer.setVisible(layerFlag);
+	});
+
+	// 최단 거리 
+	$('#shortest').on('click', function() {
+		var layer = GAIA3D.GIS.getLayerById('network_layer');
+		layer.setVisible(true);
+		layer.getSource().updateParams({'viewparams': "edge:edge_data;node:node_data;x1:945620.852;y1:1946484.168;x2:950440.556;y2:1947057.942;routeType:false"});
+		layer.getSource().refresh();
+	});
+
+	$('#optimum').on('click', function() {
+		var layer = GAIA3D.GIS.getLayerById('network_layer');
+		layer.setVisible(true);
+		layer.getSource().updateParams({'viewparams': "edge:edge_data;node:node_data;x1:945620.852;y1:1946484.168;x2:950440.556;y2:1947057.942;routeType:true"});
+		layer.getSource().refresh();
+	});
+
+	$('#pathClear').on('click', function() {
+		var layer = GAIA3D.GIS.getLayerById('network_layer');
+		layer.setVisible(false);
+	});
 });
 
 function addBlock(layerId, res) {

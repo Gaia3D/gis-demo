@@ -46,21 +46,35 @@ var MapInit = function(mapConfig) {
 		}),
 		*/
 		// shp 레이어
-		/*
+		
 		new ol.layer.Image({
 			id: 'wms_layer',
-			visible: true,
+			visible: false,
 			source: new ol.source.ImageWMS({
 				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
 				params: {
 					'VERSION' : '1.1.1',
 					'SRS': coordinate,
 					'TILED': true,
-					'LAYERS': ['demo:building', 'demo:road', 'demo:road_link']	//'demo:emd',
+					'LAYERS': ['demo:edge_data']	//'demo:emd',
 				}
 			})
 		}),
-		*/
+
+		new ol.layer.Image({
+			id: 'network_layer',
+			visible: false,
+			source: new ol.source.ImageWMS({
+				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+				params: {
+					'VERSION' : '1.1.1',
+					'SRS': coordinate,
+					'TILED': true,
+					'LAYERS': ['demo:pgr_fromAtoB']	//'demo:emd',
+				}
+			})
+		}),
+		
 		// 벡터 레이어
 		new ol.layer.Vector({
 			id: 'block_layer',

@@ -9,6 +9,10 @@
 <body>
 	<div id="map" class="map"></div>
 	<div class="mapControl">
+		<p>경로탐색</p>
+		<button id="shortest">최단거리</button>
+		<button id="optimum">최적거리</button>
+		<button id="pathClear">지우기</button>
 		<p>지도</p>
 		<button id="zoom" class="zoom" data-direction="in">지도확대</button>
 		<button class="zoom" data-direction="out">지도축소</button>
@@ -33,6 +37,8 @@
 		<button id="removeBlock" data-target-layer="block_layer">블록지우기</button>
 		<p>건물</p>
 		<button id="getInfo" data-status="off" data-on="활성화" data-off="비활성화">비활성화</button>
+		<p>도로</p>
+		<button id="getRoadInfo" data-status="off" data-on="활성화" data-off="비활성화">비활성화</button>
 	</div>
 
 	<!-- 스케일 바 -->
