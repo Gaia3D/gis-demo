@@ -4,6 +4,8 @@ var MapInit = function(mapConfig) {
 		throw new Error('New 를 통해 생성 하십시오.');
 	}
 
+	var self = this;
+
 	var geoserverDataUrl = mapConfig.geoserverDataUrl;
 	var geoserverDataWorkspace = mapConfig.geoserverDataWorkspace;
 	var coordinate = mapConfig.coordinate;
@@ -95,18 +97,15 @@ var MapInit = function(mapConfig) {
 
 	var proj = new ol.proj.Projection({
 		code: coordinate,
-		units: 'm',
-		global: false,
 		extent: mapExtent
 	});
 
-	var view = new ol.View({
+	this.view = new ol.View({
 		center: mapCenter,
 		zoom: 12,
 		extent: mapExtent,
 		projection : proj
 	});
-
 
 	/*** START: control ***/
 	var mousePositionControl = new ol.control.MousePosition({
@@ -123,25 +122,24 @@ var MapInit = function(mapConfig) {
 
 
 	/*** START: interaction ***/
-	var selectFilter = false;
+	this.selectFilter = false;
     var select = new ol.interaction.Select({
 		condition: ol.events.condition.click,
-		features: ol.interaction.Select,
 		toggleCondition: ol.events.condition.shiftKeyOnly,
 		layers: function() {
 			// translate를 할 레이어 설정
 			var targetLayer = [];
-			var option = 'translate';
-			var layers = map.getLayers().getArray();
+
+			var layers = self.map.getLayers().getArray();
 			layers.filter(function(layer, index) {
-				if(layer.get('option') === option){
+				if(layer.get('option') === 'translate'){
 					targetLayer.push(layer);
 				}
 			});
 			return targetLayer;
 		},
 		filter: function(e, a, b) {
-			return selectFilter;
+			return self.selectFilter;
 		}
 	});
 
@@ -179,306 +177,290 @@ var MapInit = function(mapConfig) {
     });
 
 	// 지도객체
-	var map;
+	function create(element) {
+		// 좌표계 정의
+		Object.keys(projCode).forEach(function(key){	// 브라우저 호환성 - ie9~, chrome
+			proj4.defs(key, projCode[key]);
+		});
+		ol.proj.proj4.register(proj4);
 
-	/**
-	 * Public
-	 */
-	return {
+		// 맵 생성
+		var map = new ol.Map({
+			controls: ol.control.defaults({
+				attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+					collapsible: false
+				}), zoom:false, rotate:false
+			}).extend([
+				mousePositionControl
+			]),
+			interactions: ol.interaction.defaults(),
+			overlays: [tooltipOverlay, popupOverlay],
+			layers: layers,
+			view: self.view,
+			target: element
+		});
 
-		layerState: {
-			building: false
-		},
+		//map.addControls(mousePositionControl);
+		map.addInteraction(select);
+		map.addInteraction(translate);
+		map.addInteraction(mouseWheelZoom);
+		map.on('singleclick', function(event){
+			if (event.dragging) return;
 
-		/**
-		 * 좌표계 정의
-		 */
-		projDefs: function() {
-			Object.keys(projCode).forEach(function(key){	// 브라우저 호환성 - ie9~, chrome
-				proj4.defs(key, projCode[key]);
-			});
-		},
-
-		/**
-		 * 맵 성생
-		 */
-		create: function(element) {
-			var gisMethod = this;
-
-			// 좌표계 정의
-			gisMethod.projDefs();
-
-			// 맵 생성
-			map = new ol.Map({
-				controls: ol.control.defaults({
-					attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-						collapsible: false
-					}), zoom:false, rotate:false
-				}).extend([
-					mousePositionControl
-				]),
-				interactions: ol.interaction.defaults(),
-				overlays: [tooltipOverlay, popupOverlay],
-				layers: layers,
-				view: view,
-				target: element
-			});
-
-			//map.addControls(mousePositionControl);
-			map.addInteraction(select);
-			map.addInteraction(translate);
-			map.addInteraction(mouseWheelZoom);
-			map.on('singleclick', function(event){
-				if (event.dragging) return;
-
-				// 건물 버튼 on
-				var onBuildingLayer = GAIA3D.GIS.layerState.building;
-				if(onBuildingLayer) {
-					gisMethod.getGeoInfo(event);
-				}
-
-				// 팝업 on
-				gisMethod.toggleOverlay(event);
-			});
-
-			return map;
-		},
-
-		/**
-		 * 현재 좌표계 조회
-		 * 호출: GAIA3D.GIS.getCurProj()
-		 */
-		getCurProj: function() {
-			return map.getView().getProjection();
-		},
-
-		/**
-		 * ID를 통해 레이어 찾기
-		 * 호출: GAIA3D.GIS.getLayerById('base_layer')
-		 */
-		getLayerById: function(layerId) {
-			var layer = null;
-			if(layerId){
-				var layers = map.getLayers().getArray();
-				for(var i in layers){	 // 브라우저 호환성 - ie6~, chrome
-					if(layers[i].get('id') === layerId){
-						layer = layers[i];
-						break;
-					}
-				}
-			}
-			return layer;
-		},
-
-		/**
-		 * WKT로 Feature 그리기
-		 */
-		getFeatureFromWkt: function(wkt) {
-			var format = new ol.format.WKT();
-			var feature = format.readFeature(wkt, {
-				dataProjection: 'EPSG:4326',
-				featureProjection: this.getCurProj()
-			});
-			return feature;
-		},
-
-		/**
-		 * Box(네 점의 좌표)로 Feature 그리기
-		 */
-		getFeatureFromBox: function(box) {
-			var coord = this.getPolygonFromBox(box);
-			var transCoord = this.transCoord4326ToCurProj(coord);
-			var feature = this.getFeatureFromCoord('Polygon', transCoord);
-			return feature;
-		},
-
-		/**
-		 * Box를 Polygon으로 변경
-		 */
-		getPolygonFromBox: function(box) {
-			var polygon = box.split(';');
-			polygon.push(polygon[0]);
-			return polygon;
-		},
-
-		/**
-		 * 좌표로 Feature 그리기
-		 */
-		getFeatureFromCoord: function(geomType, coord) {
-			var shape = {
-				'Point': new ol.geom.Point(coord),
-				'Polygon': new ol.geom.Polygon([coord])
+			// 건물 버튼 on
+			var onBuildingLayer = GAIA3D.GIS.layerState.building;
+			if(onBuildingLayer) {
+				self.getGeoInfo(event);
 			}
 
-			var feature = new ol.Feature({
-				geometry: shape[geomType]
-			});
+			// 팝업 on
+			self.toggleOverlay(event);
+		});
 
-			return feature;
-		},
+		return map;
+	}
 
-		/**
-		 * 지도의 줌 레벨을 변경
-		 */
-		setZoom: function(direction) {
-			var zoom = 0;
-			var zoomFactor = 1;
-			var currentZoom = view.getZoom();
-			if(direction === 'in') {
-				zoom = currentZoom + zoomFactor;
-			} else if(direction === 'out') {
-				zoom = currentZoom - zoomFactor;
+	this.map = create('map');
+};
+
+MapInit.prototype.layerState = {
+	building: false
+}
+
+/**
+ * 현재 좌표계 조회
+ * 호출: GAIA3D.GIS.getCurProj()
+ */
+MapInit.prototype.getCurProj = function() {
+	return this.map.getView().getProjection();
+}
+
+/**
+ * ID를 통해 레이어 찾기
+ * 호출: GAIA3D.GIS.getLayerById('base_layer')
+ */
+MapInit.prototype.getLayerById = function(layerId) {
+	var layer = null;
+	if(layerId){
+		var layers = this.map.getLayers().getArray();
+		for(var i in layers){	 // 브라우저 호환성 - ie6~, chrome
+			if(layers[i].get('id') === layerId){
+				layer = layers[i];
+				break;
 			}
-
-			view.animate({
-				zoom: zoom,
-				duration: 700
-			});
-		},
-
-		/**
-		 * 지도를 회전
-		 */
-		setRotate: function(direction) {
-			var rotation = 0;
-			if(direction === 'left') {
-				rotation = view.getRotation() + Math.PI/2
-			} else if(direction === 'right') {
-				rotation = view.getRotation() - Math.PI/2
-			}
-
-			view.animate({
-				rotation: rotation
-			});
-		},
-
-		/**
-		 * 블록 객체를 이동
-		 */
-		setTranslate: function(status) {
-			var boolean = status === 'on' ? true : false;
-			selectFilter = boolean;
-		},
-
-		/**
-		 * 4326 데이터를 현재 좌표계로 변경
-		 */
-		transCoord4326ToCurProj: function(coordArray) {
-			var returnCoord = [];
-			for(var i=0, l=coordArray.length; i<l; i++) {
-				var coord = coordArray[i].split(',');
-				var transCoord = ol.proj.transform(coord, 'EPSG:4326', this.getCurProj());
-				returnCoord.push(transCoord);
-			}
-			return returnCoord;
-		},
-
-		/**
-		 * 그리기 객체 추가
-		 */
-		drawGeometry: function(source, type) {
-			// 활성화 된 draw가 있으면 삭제하고
-			this.clearDrawInteraction();
-
-			if (type !== 'None') {
-				var draw = new ol.interaction.Draw({
-					source: source,
-					type: type
-				});
-				// 맵에 interaction 추가
-				map.addInteraction(draw);
-			}
-		},
-
-		/**
-		 * 레이어에 피쳐 추가 (단일)
-		 */
-		addFeatureToLayer: function(layerId, feature) {
-			var layer = this.getLayerById(layerId);
-			layer.getSource().addFeature(feature);
-		},
-
-		/**
-		 * 레이어에 피쳐 추가 (다중)
-		 */
-		addFeaturesToLayer: function(layerId, features) {
-			var layer = this.getLayerById(layerId);
-			layer.getSource().addFeatures(features);
-		},
-
-		/**
-		 * 선택한 객체 모두 지우기
-		 */
-		clearFeatureToSelect: function() {
-			map.getInteractions().forEach(function(interaction) {
-				if(interaction instanceof ol.interaction.Select) {
-					// Select interaction의 Feature 삭제
-					interaction.getFeatures().clear();
-				}
-			});
-		},
-
-		/**
-		 * 특정 레이어의 모든 객체 지우기
-		 */
-		clearFeatureToLayer: function(layerId) {
-			var layer = this.getLayerById(layerId);
-			layer.getSource().clear();
-		},
-
-		/**
-		 * 활성화 된 interaction 삭제
-		 */
-		clearDrawInteraction: function() {
-			map.getInteractions().forEach(function(interaction) {
-				// Draw interaction 삭제
-				if(interaction instanceof ol.interaction.Draw) {
-					map.removeInteraction(interaction);
-				}
-			});
-		},
-
-		/**
-		 * 객체의 정보를 취득
-		 */
-		getGeoInfo: function(event) {
-			var layer = this.getLayerById('wms_layer');
-			if(layer) {
-				var viewResolution = map.getView().getResolution();
-				var targetLayer = 'demo:building';	// 없으면 all
-				var url = layer.getSource().getGetFeatureInfoUrl(
-					event.coordinate,
-					viewResolution,
-					this.getCurProj().getCode(),
-					{'INFO_FORMAT': 'application/json', 'X': 50, 'Y': 50, 'FEATURE_COUNT': 50, 'QUERY_LAYERS': targetLayer}
-				);
-				if (url) {
-					$.ajax({
-						url: url,
-						headers: {'X-Requested-With': 'XMLHttpRequest'},
-						type: 'get',
-						dataType: 'json',
-						success: function(res) {
-							var features = res.features;
-							if(features.length > 0){
-								for(var i=0,len=features.length; i<len; i++) {
-									alert(features[i].id);
-								}
-							}
-						},
-						error: function(request, status, error) {
-							debugger
-						}
-					});
-				}
-			}
-		},
-
-		/**
-		 * 팝업 on/off
-		 */
-		toggleOverlay: function(event) {
-
 		}
 	}
-};
+	return layer;
+}
+
+/**
+ * WKT로 Feature 그리기
+ */
+MapInit.prototype.getFeatureFromWkt = function(wkt) {
+	var format = new ol.format.WKT();
+	var feature = format.readFeature(wkt, {
+		dataProjection: 'EPSG:4326',
+		featureProjection: this.getCurProj()
+	});
+	return feature;
+}
+
+/**
+ * Box(네 점의 좌표)로 Feature 그리기
+ */
+MapInit.prototype.getFeatureFromBox = function(box) {
+	var coord = this.getPolygonFromBox(box);
+	var transCoord = this.transCoord4326ToCurProj(coord);
+	var feature = this.getFeatureFromCoord('Polygon', transCoord);
+	return feature;
+},
+
+/**
+ * Box를 Polygon으로 변경
+ */
+MapInit.prototype.getPolygonFromBox = function(box) {
+	var polygon = box.split(';');
+	polygon.push(polygon[0]);
+	return polygon;
+}
+
+/**
+ * 좌표로 Feature 그리기
+ */
+MapInit.prototype.getFeatureFromCoord = function(geomType, coord) {
+	var shape = {
+		'Point': new ol.geom.Point(coord),
+		'Polygon': new ol.geom.Polygon([coord])
+	}
+
+	var feature = new ol.Feature({
+		geometry: shape[geomType]
+	});
+
+	return feature;
+}
+
+/**
+ * 지도의 줌 레벨을 변경
+ */
+MapInit.prototype.setZoom = function(direction) {
+	var zoom = 0;
+	var zoomFactor = 1;
+	var currentZoom = this.view.getZoom();
+	if(direction === 'in') {
+		zoom = currentZoom + zoomFactor;
+	} else if(direction === 'out') {
+		zoom = currentZoom - zoomFactor;
+	}
+
+	this.view.animate({
+		zoom: zoom,
+		duration: 700
+	});
+}
+
+/**
+ * 지도를 회전
+ */
+MapInit.prototype.setRotate = function(direction) {
+	var rotation = 0;
+	if(direction === 'left') {
+		rotation = this.view.getRotation() + Math.PI/2
+	} else if(direction === 'right') {
+		rotation = this.view.getRotation() - Math.PI/2
+	}
+
+	this.view.animate({
+		rotation: rotation
+	});
+}
+
+/**
+ * 블록 객체를 이동
+ */
+MapInit.prototype.setTranslate = function(status) {
+	var boolean = status === 'on' ? true : false;
+	this.selectFilter = boolean;
+}
+
+/**
+ * 4326 데이터를 현재 좌표계로 변경
+ */
+MapInit.prototype.transCoord4326ToCurProj = function(coordArray) {
+	var returnCoord = [];
+	for(var i=0, l=coordArray.length; i<l; i++) {
+		var coord = coordArray[i].split(',');
+		var transCoord = ol.proj.transform(coord, 'EPSG:4326', this.getCurProj());
+		returnCoord.push(transCoord);
+	}
+	return returnCoord;
+}
+
+/**
+ * 그리기 객체 추가
+ */
+MapInit.prototype.drawGeometry = function(source, type) {
+	// 활성화 된 draw가 있으면 삭제하고
+	this.clearDrawInteraction();
+
+	if (type !== 'None') {
+		var draw = new ol.interaction.Draw({
+			source: source,
+			type: type
+		});
+		// 맵에 interaction 추가
+		this.map.addInteraction(draw);
+	}
+}
+
+/**
+ * 레이어에 피쳐 추가 (단일)
+ */
+MapInit.prototype.addFeatureToLayer = function(layerId, feature) {
+	var layer = this.getLayerById(layerId);
+	layer.getSource().addFeature(feature);
+}
+
+/**
+ * 레이어에 피쳐 추가 (다중)
+ */
+MapInit.prototype.addFeaturesToLayer = function(layerId, features) {
+	var layer = this.getLayerById(layerId);
+	layer.getSource().addFeatures(features);
+}
+
+/**
+ * 선택한 객체 모두 지우기
+ */
+MapInit.prototype.clearFeatureToSelect = function() {
+	this.map.getInteractions().forEach(function(interaction) {
+		if(interaction instanceof ol.interaction.Select) {
+			// Select interaction의 Feature 삭제
+			interaction.getFeatures().clear();
+		}
+	});
+}
+
+/**
+ * 특정 레이어의 모든 객체 지우기
+ */
+MapInit.prototype.clearFeatureToLayer = function(layerId) {
+	var layer = this.getLayerById(layerId);
+	layer.getSource().clear();
+}
+
+/**
+ * 활성화 된 interaction 삭제
+ */
+MapInit.prototype.clearDrawInteraction = function() {
+	var map = this.map;
+	map.getInteractions().forEach(function(interaction) {
+		// Draw interaction 삭제
+		if(interaction instanceof ol.interaction.Draw) {
+			map.removeInteraction(interaction);
+		}
+	});
+}
+
+/**
+ * 객체의 정보를 취득
+ */
+MapInit.prototype.getGeoInfo = function(event) {
+	var layer = this.getLayerById('wms_layer');
+	if(layer) {
+		var viewResolution = this.map.getView().getResolution();
+		var targetLayer = 'demo:building';	// 없으면 all
+		var url = layer.getSource().getGetFeatureInfoUrl(
+			event.coordinate,
+			viewResolution,
+			this.getCurProj().getCode(),
+			{'INFO_FORMAT': 'application/json', 'X': 50, 'Y': 50, 'FEATURE_COUNT': 50, 'QUERY_LAYERS': targetLayer}
+		);
+		if (url) {
+			$.ajax({
+				url: url,
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+				type: 'get',
+				dataType: 'json',
+				success: function(res) {
+					var features = res.features;
+					if(features.length > 0){
+						for(var i=0,len=features.length; i<len; i++) {
+							alert(features[i].id);
+						}
+					}
+				},
+				error: function(request, status, error) {
+					debugger
+				}
+			});
+		}
+	}
+}
+
+/**
+ * 팝업 on/off
+ */
+MapInit.prototype.toggleOverlay = function(event) {
+
+}
