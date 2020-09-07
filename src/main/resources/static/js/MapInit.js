@@ -126,17 +126,8 @@ var MapInit = function(mapConfig) {
     var select = new ol.interaction.Select({
 		condition: ol.events.condition.click,
 		toggleCondition: ol.events.condition.shiftKeyOnly,
-		layers: function() {
-			// translate를 할 레이어 설정
-			var targetLayer = [];
-
-			var layers = self.map.getLayers().getArray();
-			layers.filter(function(layer, index) {
-				if(layer.get('option') === 'translate'){
-					targetLayer.push(layer);
-				}
-			});
-			return targetLayer;
+		layers: function(layer) {
+			return layer.get('option') === 'translate';
 		},
 		filter: function(e, a, b) {
 			return self.selectFilter;
