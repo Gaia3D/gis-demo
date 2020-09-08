@@ -6,8 +6,8 @@ var MapInit = function(mapConfig) {
 
 	var self = this;
 
-	var geoserverDataUrl = mapConfig.geoserverDataUrl;
-	var geoserverDataWorkspace = mapConfig.geoserverDataWorkspace;
+	this.geoserverDataUrl = mapConfig.geoserverDataUrl;
+	this.geoserverDataWorkspace = mapConfig.geoserverDataWorkspace;
 	var coordinate = mapConfig.coordinate;
 	var mapDefaultLayer = mapConfig.mapDefaultLayer;
 	var mapExtent = mapConfig.mapExtent;
@@ -248,6 +248,7 @@ MapInit.prototype.getLayerById = function(layerId) {
  * WKT로 Feature 그리기
  */
 MapInit.prototype.getFeatureFromWkt = function(wkt) {
+	// debugger
 	var format = new ol.format.WKT();
 	var feature = format.readFeature(wkt, {
 		dataProjection: 'EPSG:4326',
@@ -447,6 +448,42 @@ MapInit.prototype.getGeoInfo = function(event) {
 			});
 		}
 	}
+}
+
+/**
+ * sample
+ * TODO: 수정 필요
+ */
+MapInit.prototype.addWFSLayer = function() {
+	// GAIA3D.GIS.addWFSLayer()
+
+	var map = this;
+	var epsgCode = map.view.getProjection().getCode();
+	var layerId = 'wfs_layer';
+	var layerKey = 'road_link';
+
+	var layer = new ol.layer.Vector({
+	    id: layerId,
+	    visible: true,
+	    zIndex : 50,
+	    renderMode: 'vertor',
+	    source: new ol.source.Vector({
+	        format: new ol.format.GeoJSON(),
+	        url: function(extent) {
+	            var queryString = "enable_yn='Y'";
+	            var url = map.geoserverDataUrl + '/' + map.geoserverDataWorkspace + '/wfs?service=WFS' +
+	                '&version=1.1.0&request=GetFeature&typename=' + layerKey +
+	                '&outputFormat=application/json&srsname=' + epsgCode +
+	                '&bbox=' + extent.join(',') + ',' + epsgCode;
+	            return url;
+	        },
+	        strategy: ol.loadingstrategy.bbox
+	    }),
+	    style: function(feature, resolution) {
+	    	return GAIA3D.Style.line;
+	    }
+    });
+	this.map.addLayer(layer);
 }
 
 /**

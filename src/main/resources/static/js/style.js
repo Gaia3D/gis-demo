@@ -64,5 +64,14 @@ GAIA3D.Style = {
                 offsetY: -50
             })
         })
-    ]
+    ],
+
+    line: [
+		new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: 'black',
+				width: 3
+			})
+        })
+	]
 };
