@@ -36,7 +36,7 @@ var MapInit = function(mapConfig) {
 			visible: true,
 			source: new ol.source.TileWMS({
 	    		// url: 'http://localhost:8080/geoserver/demo/wms',
-				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+				url: self.geoserverDataUrl + '/' + self.geoserverDataWorkspace + '/wms',
 				params: {
 					'FORMAT' : 'image/png',
 					'VERSION' : '1.1.1',
@@ -53,7 +53,7 @@ var MapInit = function(mapConfig) {
 			id: 'wms_layer',
 			visible: true,
 			source: new ol.source.ImageWMS({
-				url: geoserverDataUrl + '/' + geoserverDataWorkspace + '/wms',
+				url: self.geoserverDataUrl + '/' + self.geoserverDataWorkspace + '/wms',
 				params: {
 					'VERSION' : '1.1.1',
 					'SRS': coordinate,
@@ -223,7 +223,7 @@ MapInit.prototype.layerState = {
  * 호출: GAIA3D.GIS.getCurProj()
  */
 MapInit.prototype.getCurProj = function() {
-	return this.map.getView().getProjection();
+	return this.view.getProjection();
 }
 
 /**
@@ -418,14 +418,16 @@ MapInit.prototype.clearDrawInteraction = function() {
  * 객체의 정보를 취득
  */
 MapInit.prototype.getGeoInfo = function(event) {
+	var epsgCode = this.getCurProj().getCode();
 	var layer = this.getLayerById('wms_layer');
+
 	if(layer) {
-		var viewResolution = this.map.getView().getResolution();
+		var viewResolution = this.view.getResolution();
 		var targetLayer = 'demo:building';	// 없으면 all
-		var url = layer.getSource().getGetFeatureInfoUrl(
+		var url = layer.getSource().getFeatureInfoUrl(
 			event.coordinate,
 			viewResolution,
-			this.getCurProj().getCode(),
+			epsgCode,
 			{'INFO_FORMAT': 'application/json', 'X': 50, 'Y': 50, 'FEATURE_COUNT': 50, 'QUERY_LAYERS': targetLayer}
 		);
 		if (url) {
